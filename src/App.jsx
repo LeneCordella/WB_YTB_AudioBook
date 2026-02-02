@@ -7,7 +7,7 @@ import ControlButtons from "./components/ControlButtons";
 import TrackManager from "./components/TrackManager";
 import Cover from "./components/Cover";
 import book from "./assets/chapters/Book.js";
-import ProgressBar from "./components/ProgressBar.jsx";
+import ProgressBox from "./components/ProgressBox.jsx";
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -15,12 +15,27 @@ function App() {
   const [trackTotalTime, setTrackTotalTime] = useState(0);
   const [trackCurrentTime, setTrackCurrentTime] = useState(0);
   const refTagAudio = useRef(null);
+  const progressBar = useRef(null);
 
   useEffect(() => {
+    if (!refTagAudio.current) return;
+    refTagAudio.current.load();
+    console.log("chapter changed to", currentChapter);
     if (isPlaying) {
-      playTrack();
+      refTagAudio.current
+        .play()
+        .catch((e) => console.warn("play failed on chapter change", e));
     }
   }, [currentChapter]);
+
+  useEffect(() => {
+    if (!refTagAudio.current) return;
+    if (isPlaying) {
+      refTagAudio.current.play().catch((e) => console.warn("play failed", e));
+    } else {
+      refTagAudio.current.pause();
+    }
+  }, [isPlaying]);
 
   const bookInfo = {
     title: "Memórias Póstumas de Brás Cubas",
@@ -32,21 +47,43 @@ function App() {
   };
 
   const previousTrack = () => {
-    if (currentChapter === 0) {
-      setCurrentChapter(bookInfo.chapterCount - 1);
-    } else {
-      setCurrentChapter(currentChapter - 1);
-    }
+    const next =
+      currentChapter === 0 ? bookInfo.chapterCount - 1 : currentChapter - 1;
+    console.log("previousTrack: moving to", next);
+    setCurrentChapter(next);
   };
 
   function playTrack() {
-    refTagAudio.current.play();
-    setIsPlaying(true);
+    if (!refTagAudio.current) {
+      console.warn("playTrack: audio ref is null");
+      setIsPlaying(true);
+      return;
+    }
+    refTagAudio.current
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+        console.log("playTrack: playing");
+      })
+      .catch((e) => {
+        console.warn("play() failed", e);
+        setIsPlaying(true);
+      });
   }
 
   const pauseTrack = () => {
-    refTagAudio.current.pause();
+    if (!refTagAudio.current) {
+      console.warn("pauseTrack: audio ref is null");
+      setIsPlaying(false);
+      return;
+    }
+    try {
+      refTagAudio.current.pause();
+    } catch (e) {
+      console.warn("pause failed", e);
+    }
     setIsPlaying(false);
+    console.log("pauseTrack");
   };
 
   const playOrPause = () => {
@@ -58,11 +95,46 @@ function App() {
   };
 
   const nextTrack = () => {
-    if (bookInfo.chapterCount === currentChapter + 1) {
-      setCurrentChapter(0);
-    } else {
-      setCurrentChapter(currentChapter + 1);
+    const next =
+      bookInfo.chapterCount === currentChapter + 1 ? 0 : currentChapter + 1;
+    console.log("nextTrack: moving to", next);
+    setCurrentChapter(next);
+  };
+
+  const forward15s = () => {
+    if (!refTagAudio.current) {
+      console.warn("forward15s: audio ref is null");
+      return;
     }
+
+    const duration = refTagAudio.current.duration || Infinity;
+    const newTime = Math.min(duration, refTagAudio.current.currentTime + 15);
+    refTagAudio.current.currentTime = newTime;
+    console.log("forward15s:", newTime);
+  };
+
+  const forwardTo = (event) => {
+    const width = progressBar.current?.clientWidth || 1;
+    const offset =
+      event.nativeEvent?.offsetX ?? event.nativeEvent?.offsetx ?? 0;
+    const newTime = (offset / width) * trackTotalTime;
+    if (refTagAudio.current && !Number.isNaN(newTime)) {
+      refTagAudio.current.currentTime = Math.min(
+        Math.max(newTime, 0),
+        trackTotalTime || Infinity,
+      );
+    }
+    console.log("forwardTo:", newTime);
+  };
+
+  const rewind15s = () => {
+    if (!refTagAudio.current) {
+      console.warn("rewind15s: audio ref is null");
+      return;
+    }
+    const newTime = Math.max(0, refTagAudio.current.currentTime - 15);
+    refTagAudio.current.currentTime = newTime;
+    console.log("rewind15s:", newTime);
   };
 
   return (
@@ -75,14 +147,18 @@ function App() {
         setTrackTotalTime={setTrackTotalTime}
         refAudioTag={refTagAudio}
       />
-      <ProgressBar
+      <ProgressBox
         trackTotalTime={trackTotalTime}
         trackCurrentTime={trackCurrentTime}
+        refProgressBar={progressBar}
+        forwardTo={forwardTo}
       />
       <ControlButtons
         isPlaying={isPlaying}
+        rewind15s={rewind15s}
         previousTrack={previousTrack}
         playOrPause={playOrPause}
+        forward15s={forward15s}
         nextTrack={nextTrack}
       />
     </>

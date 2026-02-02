@@ -1,23 +1,20 @@
-const ProgressBar = ({ trackTotalTime, trackCurrentTime }) => {
+const ProgressBox = ({
+  trackTotalTime,
+  trackCurrentTime,
+  forwardTo,
+  refProgressBar,
+}) => {
   // Add this line to see exactly what is coming in
   console.log("Incoming Total Time:", trackTotalTime, typeof trackTotalTime);
   const timeFormat = (timeInSeconds) => {
-    // 1. Convert input to a number explicitly first
-    const seconds = Number(timeInSeconds);
-
-    // 2. Check the CONVERTED variable (seconds), not the original argument
-    if (!Number.isFinite(seconds) || seconds < 0) {
-      return "00:00";
-    }
-
-    const time = new Date(null);
-    time.setSeconds(seconds); // Use the converted 'seconds' here too
-    return time.toISOString().slice(14, 19);
+    const tempo = new Date(null);
+    tempo.setSeconds(timeInSeconds);
+    return tempo.toISOString().slice(14, 19);
   };
 
   return (
-    <section className="progress-bar">
-      <div className="total-progress">
+    <section className="progress-box" onClick={forwardTo}>
+      <div className="total-progress" ref={refProgressBar} onClick={forwardTo}>
         <div
           className="current-progress"
           style={{ width: `${(trackCurrentTime * 100) / trackTotalTime}%` }}
@@ -36,4 +33,4 @@ const ProgressBar = ({ trackTotalTime, trackCurrentTime }) => {
     </section>
   );
 };
-export default ProgressBar;
+export default ProgressBox;

@@ -6,7 +6,7 @@ import ChapterSelector from "./components/ChapterSelector";
 import ControlButtons from "./components/ControlButtons";
 import TrackManager from "./components/TrackManager";
 import Cover from "./components/Cover";
-import book from "./assets/chapters/Book.js";
+import book from "./assets/chapters/book.js";
 import ProgressBox from "./components/ProgressBox.jsx";
 
 function App() {

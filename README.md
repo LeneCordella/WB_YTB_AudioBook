@@ -6,6 +6,19 @@
 [![Audio](https://img.shields.io/badge/Audio-LibriVox-800000)](https://librivox.org/)
 [![Study project](https://img.shields.io/badge/Study%20project-Hashtag%20Programa%C3%A7%C3%A3o-2F6F9F)](https://youtu.be/SspuJnpfVP0)
 
+## Printscreens
+
+<p align="center">
+  <img src="src/assets/screenshot%2001.png" alt="Screenshot 01" width="420" />
+  <img src="src/assets/screenshot%2002.png" alt="Screenshot 02" width="420" />
+</p>
+
+## Demo
+
+Acesse a versão publicada:
+
+[wb-ytb-audio-book.vercel.app](https://wb-ytb-audio-book.vercel.app/)
+
 ## Português (Brasil)
 
 Um player de audiolivro feito com React para ouvir capítulos de **Memórias Póstumas de Brás Cubas**, de Machado de Assis. A interface reúne a capa do livro, a seleção do capítulo, a barra de progresso e controles de reprodução.
@@ -50,6 +63,19 @@ Vídeo de referência: [Hashtag Programação — projeto de audiolivro](https:/
 ---
 
 ## English
+
+## Screenshots
+
+<p align="center">
+  <img src="src/assets/screenshot%2001.png" alt="Screenshot 01" width="420" />
+  <img src="src/assets/screenshot%2002.png" alt="Screenshot 02" width="420" />
+</p>
+
+## Live Demo
+
+Visit the deployed app here:
+
+[wb-ytb-audio-book.vercel.app](https://wb-ytb-audio-book.vercel.app/)
 
 A React audiobook player for listening to chapters of **The Posthumous Memoirs of Brás Cubas** by Machado de Assis. The interface brings together the book cover, chapter selection, playback progress, and audio controls.
 
